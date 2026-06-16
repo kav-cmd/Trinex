@@ -1,0 +1,79 @@
+[
+  {
+    "file": "legit_sbi-alerts.json",
+    "label": "SBI legitimate OTP",
+    "bank": "SBI-ALERTS",
+    "type": "legitimate",
+    "expected": "LEGITIMATE"
+  },
+  {
+    "file": "legit_hdfcbk.json",
+    "label": "HDFC debit alert",
+    "bank": "HDFCBK",
+    "type": "legitimate",
+    "expected": "LEGITIMATE"
+  },
+  {
+    "file": "legit_icicib.json",
+    "label": "ICICI UPI transaction",
+    "bank": "ICICIB",
+    "type": "legitimate",
+    "expected": "LEGITIMATE"
+  },
+  {
+    "file": "legit_axisbk.json",
+    "label": "Axis EMI debit",
+    "bank": "AXISBK",
+    "type": "legitimate",
+    "expected": "LEGITIMATE"
+  },
+  {
+    "file": "legit_kotakb.json",
+    "label": "Kotak OTP",
+    "bank": "KOTAKB",
+    "type": "legitimate",
+    "expected": "LEGITIMATE"
+  },
+  {
+    "file": "legit_pnb-alerts.json",
+    "label": "PNB credit alert",
+    "bank": "PNB-ALERTS",
+    "type": "legitimate",
+    "expected": "LEGITIMATE"
+  },
+  {
+    "file": "fraud_sbi-alerts.json",
+    "label": "SBI phishing",
+    "bank": "SBI-ALERTS",
+    "type": "fraud",
+    "expected": "FRAUD"
+  },
+  {
+    "file": "fraud_hdfcbk.json",
+    "label": "HDFC phishing",
+    "bank": "HDFCBK",
+    "type": "fraud",
+    "expected": "FRAUD"
+  },
+  {
+    "file": "fraud_icicib.json",
+    "label": "ICICI vishing",
+    "bank": "ICICIB",
+    "type": "fraud",
+    "expected": "FRAUD"
+  },
+  {
+    "file": "fraud_npci.json",
+    "label": "Fake NPCI KYC",
+    "bank": "NPCI",
+    "type": "fraud",
+    "expected": "FRAUD"
+  },
+  {
+    "file": "tampered_sbi.json",
+    "label": "SBI tampered amount",
+    "bank": "SBI-ALERTS",
+    "type": "tampered",
+    "expected": "FRAUD"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "Scenario": "Scenario 1: Authentic SBI OTP",
+    "Status": "Invalid signature",
+    "Verdict": "FRAUD",
+    "Expected": "LEGITIMATE",
+    "Result": "FAIL"
+  },
+  {
+    "Scenario": "Scenario 2: Authentic HDFC Alert",
+    "Status": "Invalid signature",
+    "Verdict": "FRAUD",
+    "Expected": "LEGITIMATE",
+    "Result": "FAIL"
+  },
+  {
+    "Scenario": "Scenario 3: Unsigned SBI Phishing",
+    "Status": "No signature found",
+    "Verdict": "FRAUD",
+    "Expected": "FRAUD",
+    "Result": "PASS"
+  },
+  {
+    "Scenario": "Scenario 4: Fake NPCI KYC Link",
+    "Status": "No signature found",
+    "Verdict": "FRAUD",
+    "Expected": "FRAUD",
+    "Result": "PASS"
+  },
+  {
+    "Scenario": "Scenario 5: Tampered Transaction",
+    "Status": "Invalid signature",
+    "Verdict": "FRAUD",
+    "Expected": "FRAUD",
+    "Result": "PASS"
+  }
+]

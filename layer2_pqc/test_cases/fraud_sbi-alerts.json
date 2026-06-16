@@ -1,0 +1,10 @@
+{
+  "message": "URGENT your SBI account blocked. Verify at bit.ly/sbi-secure immediately.",
+  "sender_id": "SBI-ALERTS",
+  "bank_short": null,
+  "bank_name": null,
+  "signature": null,
+  "signed": false,
+  "timestamp": 1778211438.0433915,
+  "encrypted": false
+}

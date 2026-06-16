@@ -1,0 +1,6 @@
+Algorithm,Public Key (bytes),Signature (bytes),KeyGen (ms),Sign (ms),Verify (ms),Quantum Safe
+ML-DSA-44,25,32,0.001,0.001,0.001,Yes
+ML-DSA-65,25,32,0.001,0.001,0.001,Yes
+ML-DSA-87,25,32,0.001,0.002,0.002,Yes
+RSA-2048,256,256,500.0,1.5,0.05,No
+ECDSA-256,64,64,0.1,0.5,1.2,No

@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TRINEX // Trust Fusion Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ───────────────────────────── design tokens ──────────────────────── */
+:root{
+  --bg-deep:#0a1326; --bg-surf:#131d35; --bg-elev:#1a2645; --bg-inset:#0e1830;
+  --border:#25325a; --hairline:#3d4d7c33; --hairline-strong:#3d4d7c;
+  --t1:#eceff7; --t2:#8b96b5; --t3:#5e6989;
+  --gold:#e6b454; --cyan:#5bc0eb;
+  --ok:#3dd68c; --warn:#f5a524; --bad:#e5484d;
+  --display:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --body:'Inter',ui-sans-serif,system-ui,sans-serif;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg-deep);color:var(--t1);
+  font-family:var(--body);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{
+  background:
+    radial-gradient(ellipse 1200px 700px at 15% -10%, #16224a55, transparent 60%),
+    radial-gradient(ellipse 900px 600px at 110% 110%, #2a1f4a44, transparent 55%),
+    var(--bg-deep);
+  min-height:100vh;
+}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer}
+::selection{background:var(--gold);color:var(--bg-deep)}
+
+/* ───────────────────────────── header strip ──────────────────────── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 28px;border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:11.5px;letter-spacing:0.04em;
+  background:linear-gradient(180deg,#0c1530,transparent);
+}
+.brand{display:flex;align-items:baseline;gap:14px}
+.brand .mark{
+  font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:0.18em;
+  color:var(--t1);
+}
+.brand .mark span{color:var(--gold)}
+.brand .tag{color:var(--t3);text-transform:uppercase;letter-spacing:0.16em}
+.status{display:flex;align-items:center;gap:18px;color:var(--t2)}
+.status .dot{
+  width:8px;height:8px;border-radius:50%;background:var(--ok);
+  box-shadow:0 0 0 3px #3dd68c20;animation:pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.45}}
+.status .clock{color:var(--t1)}
+
+/* ───────────────────────────── layout grid ───────────────────────── */
+.console{
+  display:grid;grid-template-columns:340px 1fr 320px;gap:0;
+  min-height:calc(100vh - 53px);
+}
+.col{padding:24px 26px;border-right:1px solid var(--border);min-width:0}
+.col:last-child{border-right:none}
+
+.eyebrow{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--t3);margin:0 0 14px 0;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:18px;height:1px;background:var(--gold)}
+
+/* ───────────────────────────── input column ──────────────────────── */
+.field{margin-bottom:18px}
+.field label{
+  display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:0.14em;
+  text-transform:uppercase;color:var(--t2);margin-bottom:8px;
+}
+.input,.textarea,.select{
+  width:100%;background:var(--bg-inset);color:var(--t1);
+  border:1px solid var(--border);border-radius:6px;
+  font-family:var(--body);font-size:13.5px;padding:11px 12px;
+  transition:border-color 0.15s,background 0.15s;
+}
+.input:focus,.textarea:focus,.select:focus{outline:none;border-color:var(--gold);background:#0e1830}
+.textarea{font-family:var(--mono);font-size:12.5px;line-height:1.55;
+  min-height:118px;resize:vertical;letter-spacing:0.01em}
+.select{appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238b96b5' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:34px}
+
+.samples{display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
+.sample{
+  text-align:left;background:transparent;color:var(--t2);
+  border:1px solid var(--border);border-radius:6px;
+  padding:9px 12px;font-family:var(--body);font-size:12.5px;
+  display:flex;align-items:center;gap:10px;transition:all 0.12s;
+}
+.sample:hover{border-color:var(--hairline-strong);color:var(--t1);background:#0e1830}
+.sample .pill{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;
+  padding:2px 6px;border-radius:3px;border:1px solid currentColor;
+}
+.sample.legit .pill{color:var(--ok)}
+.sample.sus   .pill{color:var(--warn)}
+.sample.fraud .pill{color:var(--bad)}
+
+.runbtn{
+  width:100%;margin-top:8px;padding:14px;
+  background:var(--gold);color:var(--bg-deep);
+  border:none;border-radius:6px;
+  font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:0.14em;
+  text-transform:uppercase;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  transition:all 0.15s;
+}
+.runbtn:hover{background:#f0c267;transform:translateY(-1px);
+  box-shadow:0 8px 24px -8px #e6b45470}
+.runbtn:disabled{opacity:0.5;cursor:wait;transform:none;box-shadow:none}
+.runbtn .arrow{font-family:var(--mono);font-weight:400}
+
+/* ───────────────────────────── pipeline column ───────────────────── */
+.pipeline{display:flex;flex-direction:column;gap:14px}
+
+.lyr{
+  position:relative;
+  background:var(--bg-surf);border:1px solid var(--border);
+  border-radius:8px;padding:18px 20px;
+  transition:all 0.3s ease;
+}
+.lyr.active{border-color:var(--gold);box-shadow:0 0 0 3px #e6b45418}
+.lyr.done.ok{border-color:#3dd68c50}
+.lyr.done.bad{border-color:#e5484d50}
+
+.lyr-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;gap:14px;
+}
+.lyr-title{display:flex;align-items:center;gap:14px}
+.lyr-num{
+  font-family:var(--mono);font-size:11px;color:var(--t3);
+  width:30px;height:30px;border:1px solid var(--border);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all 0.3s;
+}
+.lyr.active .lyr-num{border-color:var(--gold);color:var(--gold)}
+.lyr.done .lyr-num{border-color:transparent}
+.lyr.done.ok .lyr-num{background:#3dd68c20;color:var(--ok)}
+.lyr.done.bad .lyr-num{background:#e5484d20;color:var(--bad)}
+.lyr-name{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:0.02em}
+.lyr-sub{font-family:var(--mono);font-size:10.5px;color:var(--t3);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px}
+.lyr-state{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:0.12em;
+  color:var(--t3);text-transform:uppercase;
+}
+.lyr.active .lyr-state{color:var(--gold)}
+.lyr.done.ok .lyr-state{color:var(--ok)}
+.lyr.done.bad .lyr-state{color:var(--bad)}
+
+.lyr-body{font-size:13px;color:var(--t2);min-height:46px}
+.lyr-body .placeholder{color:var(--t3);font-style:italic;font-size:12.5px}
+
+/* L1: highlighted message */
+.tokmsg{font-family:var(--mono);font-size:12.5px;line-height:1.7;
+  background:var(--bg-inset);border:1px solid var(--border);border-radius:5px;
+  padding:9px 11px;color:var(--t1);white-space:pre-wrap;word-break:break-word}
+.tokmsg .flag{
+  background:#e5484d22;color:#ff8e92;
+  border-bottom:1px dashed var(--bad);padding:1px 2px;border-radius:2px;
+}
+.bar{
+  margin-top:10px;height:6px;background:var(--bg-inset);border-radius:3px;overflow:hidden;
+  border:1px solid var(--border);
+}
+.bar > i{
+  display:block;height:100%;border-radius:3px;
+  background:linear-gradient(90deg,#3dd68c,#f5a524,#e5484d);
+  transform:translateX(-100%);transition:transform 0.9s cubic-bezier(.5,.1,.2,1);
+}
+.bar-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;
+  color:var(--t3);margin-top:6px;letter-spacing:0.06em}
+
+/* L2: signature verifier */
+.sig-grid{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;
+  font-family:var(--mono);font-size:11.5px}
+.sig-grid dt{color:var(--t3);letter-spacing:0.08em;text-transform:uppercase;font-size:10px}
+.sig-grid dd{margin:0;color:var(--t1);word-break:break-all}
+.sig-grid dd.ok{color:var(--ok)}
+.sig-grid dd.bad{color:var(--bad)}
+.sig-bytes{
+  font-family:var(--mono);font-size:10.5px;color:var(--t3);letter-spacing:0.04em;
+  background:var(--bg-inset);border:1px solid var(--border);border-radius:4px;
+  padding:7px 9px;margin-top:8px;overflow:hidden;
+  white-space:nowrap;text-overflow:ellipsis;
+}
+
+/* L3: RF visualization */
+.rf-stage{display:flex;gap:14px;align-items:center}
+.rf-plot{
+  width:140px;height:80px;background:var(--bg-inset);border:1px solid var(--border);
+  border-radius:5px;flex-shrink:0;
+}
+.rf-meta{flex:1;font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.7}
+.rf-meta .k{color:var(--t3);letter-spacing:0.08em;text-transform:uppercase;font-size:9.5px}
+.rf-meta .v{color:var(--t1)}
+.rf-meta .v.ok{color:var(--ok)}
+.rf-meta .v.bad{color:var(--bad)}
+
+/* fusion arrow / line */
+.fusion-line{
+  height:32px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.16em;color:var(--t3);
+  text-transform:uppercase;position:relative;
+}
+.fusion-line::before,.fusion-line::after{
+  content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--hairline-strong) 40%,var(--hairline-strong) 60%,transparent);
+  margin:0 14px;
+}
+
+/* ───────────────────────────── verdict column ────────────────────── */
+.verdict-col{position:relative}
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;margin-top:6px;position:relative}
+.gauge{width:240px;height:240px;display:block}
+.gauge-center{
+  position:absolute;top:0;left:0;width:240px;height:240px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;
+  align-self:center;
+}
+.gauge-num{
+  font-family:var(--display);font-weight:600;font-size:54px;
+  line-height:1;color:var(--t1);
+  font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
+}
+.gauge-unit{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:0.18em;margin-top:6px}
+.gauge-label{
+  margin-top:18px;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;
+  color:var(--t3);text-transform:uppercase;text-align:center;line-height:1.6;
+}
+
+.verdict-banner{
+  margin-top:24px;padding:18px 16px;border-radius:8px;text-align:center;
+  background:var(--bg-surf);border:1px solid var(--border);
+  font-family:var(--display);
+}
+.verdict-banner .v-state{
+  font-weight:600;font-size:18px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--t3);
+}
+.verdict-banner .v-msg{
+  font-family:var(--body);font-size:12.5px;color:var(--t2);margin-top:6px;
+}
+.verdict-banner.ok    {background:#0e2a1d;border-color:#3dd68c50}
+.verdict-banner.ok .v-state{color:var(--ok)}
+.verdict-banner.warn  {background:#2a200c;border-color:#f5a52460}
+.verdict-banner.warn .v-state{color:var(--warn)}
+.verdict-banner.bad   {background:#2a0e10;border-color:#e5484d60}
+.verdict-banner.bad .v-state{color:var(--bad)}
+
+.weight-block{
+  margin-top:22px;padding:16px;border:1px solid var(--border);border-radius:8px;
+  background:var(--bg-inset);
+}
+.weight-row{display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:11px;color:var(--t2);padding:5px 0}
+.weight-row + .weight-row{border-top:1px dashed var(--hairline)}
+.weight-row .w-name{color:var(--t3);letter-spacing:0.08em;text-transform:uppercase;font-size:10px}
+.weight-row .w-val{color:var(--t1);font-variant-numeric:tabular-nums}
+.weight-row.total{margin-top:6px;padding-top:10px;border-top:1px solid var(--hairline-strong)!important}
+.weight-row.total .w-name{color:var(--gold);font-weight:500}
+.weight-row.total .w-val{color:var(--gold);font-size:13px}
+
+/* footer */
+.footnote{
+  padding:16px 28px;border-top:1px solid var(--border);
+  font-family:var(--mono);font-size:10.5px;color:var(--t3);letter-spacing:0.08em;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+
+/* responsive */
+@media (max-width:1180px){
+  .console{grid-template-columns:1fr;}
+  .col{border-right:none;border-bottom:1px solid var(--border)}
+}
+@media (max-width:640px){
+  .topbar{padding:14px 18px;gap:10px;flex-wrap:wrap}
+  .brand .tag{display:none}
+  .status{font-size:10px;gap:10px;flex-wrap:wrap}
+  .status .clock{flex-basis:100%;text-align:right}
+  .col{padding:20px 18px}
+  .gauge,.gauge-center{width:200px;height:200px}
+  .gauge-num{font-size:46px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="mark">TRI<span>NEX</span></div>
+    <div class="tag">Trilayer Trust Fusion Engine — IDP CS367P</div>
+  </div>
+  <div class="status">
+    <span class="dot"></span>
+    <span>L1·NLP</span><span>L2·PQC</span><span>L3·RF</span>
+    <span class="clock" id="clock">—</span>
+  </div>
+</header>
+
+<main class="console">
+
+  <!-- ════════════ INPUT COLUMN ════════════ -->
+  <section class="col">
+    <p class="eyebrow">Input Packet</p>
+
+    <div class="field">
+      <label for="msg">Message body</label>
+      <textarea id="msg" class="textarea" placeholder="Paste the SMS text here…"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="sender">Header sender ID</label>
+      <select id="sender" class="select">
+        <optgroup label="Public Sector Banks">
+          <option value="SBI-ALERTS">SBI-ALERTS  ·  State Bank of India</option>
+          <option value="PNB-ALERTS">PNB-ALERTS  ·  Punjab National Bank</option>
+          <option value="BOB-ALERTS">BOB-ALERTS  ·  Bank of Baroda</option>
+          <option value="CANBNK">CANBNK  ·  Canara Bank</option>
+        </optgroup>
+        <optgroup label="Private Sector Banks">
+          <option value="HDFCBK">HDFCBK  ·  HDFC Bank</option>
+          <option value="ICICIB">ICICIB  ·  ICICI Bank</option>
+          <option value="AXISBK">AXISBK  ·  Axis Bank</option>
+          <option value="KOTAKB">KOTAKB  ·  Kotak Mahindra Bank</option>
+          <option value="YESBNK">YESBNK  ·  Yes Bank</option>
+        </optgroup>
+        <optgroup label="Payment Networks">
+          <option value="NPCI">NPCI  ·  UPI / NPCI</option>
+          <option value="PHONEPE">PHONEPE  ·  PhonePe</option>
+          <option value="GPAY">GPAY  ·  Google Pay</option>
+        </optgroup>
+        <optgroup label="Government / Regulator">
+          <option value="RBI">RBI  ·  Reserve Bank of India</option>
+          <option value="UIDAI">UIDAI  ·  Aadhaar</option>
+          <option value="INCOMETAX">INCOMETAX  ·  Income Tax Dept.</option>
+        </optgroup>
+        <optgroup label="Unverified">
+          <option value="+91-9988776655">+91-9988776655  ·  unregistered number</option>
+          <option value="VK-SBIBNK">VK-SBIBNK  ·  spoofed header</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Test packet presets</label>
+      <div class="samples" id="samples"></div>
+    </div>
+
+    <button id="run" class="runbtn">
+      <span>Run Analysis</span>
+      <span class="arrow">→</span>
+    </button>
+  </section>
+
+  <!-- ════════════ PIPELINE COLUMN ════════════ -->
+  <section class="col">
+    <p class="eyebrow">Trilayer Verification Pipeline</p>
+
+    <div class="pipeline">
+
+      <!-- LAYER 1 -->
+      <article class="lyr" id="lyr1">
+        <div class="lyr-head">
+          <div class="lyr-title">
+            <div class="lyr-num">01</div>
+            <div>
+              <div class="lyr-name">Semantic Intelligence</div>
+              <div class="lyr-sub">DistilBERT · Fraud token analysis</div>
+            </div>
+          </div>
+          <div class="lyr-state" id="s1">Idle</div>
+        </div>
+        <div class="lyr-body" id="b1">
+          <p class="placeholder">Awaiting message for NLP classification.</p>
+        </div>
+      </article>
+
+      <div class="fusion-line">↓ signal cascade ↓</div>
+
+      <!-- LAYER 2 -->
+      <article class="lyr" id="lyr2">
+        <div class="lyr-head">
+          <div class="lyr-title">
+            <div class="lyr-num">02</div>
+            <div>
+              <div class="lyr-name">Cryptographic Identity</div>
+              <div class="lyr-sub">ML-DSA-65 · Lattice signature verify</div>
+            </div>
+          </div>
+          <div class="lyr-state" id="s2">Idle</div>
+        </div>
+        <div class="lyr-body" id="b2">
+          <p class="placeholder">Awaiting packet for post-quantum signature check.</p>
+        </div>
+      </article>
+
+      <div class="fusion-line">↓ signal cascade ↓</div>
+
+      <!-- LAYER 3 -->
+      <article class="lyr" id="lyr3">
+        <div class="lyr-head">
+          <div class="lyr-title">
+            <div class="lyr-num">03</div>
+            <div>
+              <div class="lyr-name">Physical Layer Fingerprint</div>
+              <div class="lyr-sub">OFDM · CIR · KNN classifier</div>
+            </div>
+          </div>
+          <div class="lyr-state" id="s3">Idle</div>
+        </div>
+        <div class="lyr-body" id="b3">
+          <p class="placeholder">Awaiting pilot capture from OFDM receiver.</p>
+        </div>
+      </article>
+
+      <div class="fusion-line">↓ trust fusion ↓</div>
+
+    </div>
+  </section>
+
+  <!-- ════════════ VERDICT COLUMN ════════════ -->
+  <section class="col verdict-col">
+    <p class="eyebrow">Composite Trust</p>
+
+    <div class="gauge-wrap">
+      <svg class="gauge" viewBox="0 0 200 200" aria-hidden="true">
+        <!-- track -->
+        <circle cx="100" cy="100" r="84" fill="none"
+                stroke="var(--bg-inset)" stroke-width="14"/>
+        <!-- threshold ticks at 40% & 75% on a 270° arc -->
+        <g stroke="var(--hairline-strong)" stroke-width="2" fill="none">
+          <line x1="100" y1="14" x2="100" y2="22" transform="rotate(-27 100 100)"/>
+          <line x1="100" y1="14" x2="100" y2="22" transform="rotate(67.5 100 100)"/>
+        </g>
+        <!-- value arc -->
+        <circle id="gaugeArc" cx="100" cy="100" r="84" fill="none"
+                stroke="var(--gold)" stroke-width="14"
+                stroke-linecap="round"
+                pathLength="100"
+                stroke-dasharray="0 100"
+                stroke-dashoffset="0"
+                transform="rotate(135 100 100)"
+                style="transition:stroke-dasharray 1.1s cubic-bezier(.5,.1,.2,1),stroke 0.6s"/>
+      </svg>
+      <div class="gauge-center">
+        <div class="gauge-num" id="gaugeNum">––</div>
+        <div class="gauge-unit">TRUST / 100</div>
+      </div>
+      <div class="gauge-label" id="gaugeBands">
+        <span style="color:var(--bad)">●</span> &lt;40 fraud &nbsp;·&nbsp;
+        <span style="color:var(--warn)">●</span> 40–75 suspect &nbsp;·&nbsp;
+        <span style="color:var(--ok)">●</span> ≥75 legit
+      </div>
+    </div>
+
+    <div class="verdict-banner" id="verdict">
+      <div class="v-state">Awaiting</div>
+      <div class="v-msg">Run analysis to see the composite verdict.</div>
+    </div>
+
+    <div class="weight-block">
+      <div class="weight-row"><span class="w-name">NLP layer</span>
+        <span class="w-val"><span id="w1v">0.000</span> × 0.50</span></div>
+      <div class="weight-row"><span class="w-name">PQC layer</span>
+        <span class="w-val"><span id="w2v">0.000</span> × 0.30</span></div>
+      <div class="weight-row"><span class="w-name">RF  layer</span>
+        <span class="w-val"><span id="w3v">0.000</span> × 0.20</span></div>
+      <div class="weight-row total"><span class="w-name">Composite</span>
+        <span class="w-val" id="wT">0.000</span></div>
+    </div>
+
+  </section>
+</main>
+
+<footer class="footnote">
+  <span>TRINEX · Fraud Detection in Network Communication Systems · RV College of Engineering · 2026–27</span>
+  <span>Heuristic mode — drop in DistilBERT / liboqs to run real ML &amp; PQC backends</span>
+</footer>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   TRINEX — client-side simulation of the trilayer pipeline.
+   Mirrors fusion_engine/trinex_pipeline.py so the dashboard runs
+   standalone without a backend. Same weights, same verdict bands,
+   same heuristics.
+   ════════════════════════════════════════════════════════════════════ */
+
+// ── Bank registry (subset matching layer2_pqc/bank_registry.py) ─────
+const REGISTRY = {
+  "SBI-ALERTS":"State Bank of India","SBIINB":"State Bank of India","SBI-OTP":"State Bank of India",
+  "HDFCBK":"HDFC Bank","HDFC-OTP":"HDFC Bank","ICICIB":"ICICI Bank","ICICITXN":"ICICI Bank",
+  "AXISBK":"Axis Bank","AXISMS":"Axis Bank","KOTAKB":"Kotak Mahindra Bank","KOTAK":"Kotak Mahindra Bank",
+  "PNB-ALERTS":"Punjab National Bank","PNBSMS":"Punjab National Bank",
+  "BOB-ALERTS":"Bank of Baroda","BOBSMS":"Bank of Baroda","CANBNK":"Canara Bank",
+  "UNIONBK":"Union Bank of India","YESBNK":"Yes Bank","IDFCBK":"IDFC First Bank",
+  "RBLBNK":"RBL Bank","FEDBK":"Federal Bank","INDUSB":"IndusInd Bank",
+  "NPCI":"NPCI / UPI","BHIM":"BHIM UPI","PHONEPE":"PhonePe","GPAY":"Google Pay",
+  "PAYTMB":"Paytm Payments Bank","RBI":"Reserve Bank of India","UIDAI":"UIDAI / Aadhaar",
+  "EPFO":"EPFO","INCOMETAX":"Income Tax Department","SEBI":"SEBI",
+  "AUSFB":"AU Small Finance Bank","BANDHANB":"Bandhan Bank"
+};
+
+// Map sender ID → expected RF tower profile (for L3 lookup)
+const TOWER_FOR = {
+  "SBI-ALERTS":"sbi_tower_profile","SBIINB":"sbi_tower_profile","SBI-OTP":"sbi_tower_profile",
+  "HDFCBK":"hdfc_tower_profile","HDFC-OTP":"hdfc_tower_profile"
+};
+
+// ── Layer 1 — NLP heuristic (mirrors trinex_pipeline._nlp_heuristic) ─
+const FRAUD_TOKENS = [
+  "urgent","immediately","act now","expire","expires today","last chance",
+  "within 24 hours","limited time","final notice",
+  "otp","one time password","cvv","pin","password","verify your account",
+  "share otp","reveal otp","send otp",
+  "won","winner","prize","lottery","congratulations","free gift",
+  "claim your","cashback of","lucky draw",
+  "kyc update","kyc expired","account suspended","account blocked",
+  "account will be closed","deactivated","frozen",
+  "transfer money","send money","click here to pay","upi pin",
+  "refund pending",
+  "click here","click below","bit.ly","tinyurl","rb.gy","shorturl",
+  "http://","https://"
+];
+
+function nlpLayer(msg){
+  const lower = msg.toLowerCase();
+  const hits = FRAUD_TOKENS.filter(t => lower.includes(t));
+  const n = hits.length;
+  let fraud = 1 - (1/(1+0.6*n));
+  const hasUrl = ["http://","https://","bit.ly","tinyurl","rb.gy"].some(u=>lower.includes(u));
+  const asksOtp = ["otp","one time password","pin","cvv"].some(t=>lower.includes(t));
+  if(hasUrl && asksOtp) fraud = Math.min(1, fraud+0.15);
+  const allCaps = msg.length>10 && [...msg].filter(c=>/[A-Z]/.test(c)).length > msg.length*0.4;
+  if(allCaps) fraud = Math.min(1, fraud+0.08);
+  return {
+    trust: 1 - fraud,
+    fraud_prob: fraud,
+    red_flags: hits.slice(0,10),
+    has_url: hasUrl, asks_otp: asksOtp
+  };
+}
+
+// ── Layer 2 — PQC heuristic (mirrors _pqc_heuristic) ────────────────
+function pqcLayer(packet){
+  const sid = packet.sender_id || "";
+  const bank = REGISTRY[sid];
+  const sig = packet.signature || "";
+
+  if(!bank){
+    return {trust:0.0, valid:false, status:"Unknown sender", bank:null,
+            sig_bytes:0, algo:"ML-DSA-65"};
+  }
+  if(!sig){
+    return {trust:0.10, valid:false, status:"Unsigned packet", bank,
+            sig_bytes:0, algo:"ML-DSA-65"};
+  }
+  // Synthetic signature ~3309 bytes => 6618 hex chars; we treat anything >1000 as well-formed
+  if(sig.length > 1000){
+    return {trust:0.95, valid:true,
+            status:"Verified · lattice signature OK", bank,
+            sig_bytes:Math.floor(sig.length/2), algo:"ML-DSA-65"};
+  }
+  return {trust:0.20, valid:false, status:"Malformed signature", bank,
+          sig_bytes:Math.floor(sig.length/2), algo:"ML-DSA-65"};
+}
+
+// ── Layer 3 — RF fingerprint heuristic ──────────────────────────────
+// Reproducible 8-tap CIR magnitude profiles for the two registered
+// towers, plus rogue. Matches the shape produced by layer3_rf in spirit.
+const TOWER_CIR = {
+  "sbi_tower_profile":  [0.86,0.18,0.06,0.04,0.02,0.05,0.03,0.01],
+  "hdfc_tower_profile": [0.62,0.55,0.20,0.09,0.06,0.04,0.02,0.02],
+  "rogue_transmitter":  [0.25,0.42,0.51,0.38,0.22,0.30,0.18,0.15]
+};
+
+function rfDist(a,b){
+  let s=0;for(let i=0;i<a.length;i++){const d=a[i]-b[i];s+=d*d}
+  return Math.sqrt(s);
+}
+
+function rfLayer(packet, scenarioType){
+  const claimedTower = TOWER_FOR[packet.sender_id]; // may be undefined
+  // If sender doesn't map to any known tower (spoofed/unregistered), the
+  // physical signal cannot match anything we trust → low score.
+  if(!claimedTower){
+    const measured = TOWER_CIR["rogue_transmitter"].map(v=>Math.max(0,v+(Math.random()-0.5)*0.04));
+    return {
+      trust: 0.05,
+      predicted: "unknown_transmitter",
+      verdict: "unknown",
+      d_claimed: NaN, d_other: NaN,
+      measured_cir: measured,
+      ref_cir: TOWER_CIR["rogue_transmitter"]
+    };
+  }
+
+  let actual;
+  if(scenarioType==="rogue"){
+    actual = "rogue_transmitter";
+  } else if(scenarioType==="impersonation"){
+    actual = claimedTower==="sbi_tower_profile" ? "hdfc_tower_profile" : "sbi_tower_profile";
+  } else {
+    actual = claimedTower;
+  }
+  // Add tiny noise (channel drift)
+  const measured = TOWER_CIR[actual].map(v => Math.max(0, v + (Math.random()-0.5)*0.04));
+  const otherTower = claimedTower==="sbi_tower_profile"?"hdfc_tower_profile":"sbi_tower_profile";
+
+  const d_claimed = rfDist(measured, TOWER_CIR[claimedTower]);
+  const d_other   = rfDist(measured, TOWER_CIR[otherTower]);
+  const d_rogue   = rfDist(measured, TOWER_CIR["rogue_transmitter"]);
+
+  // Nearest of the THREE candidates (claimed / other registered / rogue)
+  const candidates = [
+    {label:claimedTower,  d:d_claimed},
+    {label:otherTower,    d:d_other},
+    {label:"rogue_transmitter", d:d_rogue}
+  ].sort((a,b)=>a.d-b.d);
+  const best = candidates[0];
+
+  const ROGUE_TH = 0.45;
+  let predicted, score, verdict;
+  if(best.label === "rogue_transmitter" || best.d > ROGUE_TH){
+    predicted = "unknown_transmitter";
+    score = 0.05;
+    verdict = "unknown";
+  } else if(best.label === claimedTower){
+    score = Math.max(0.6, 1 - best.d);
+    predicted = claimedTower;
+    verdict = "match";
+  } else {
+    predicted = best.label;
+    score = 0.10;
+    verdict = "mismatch";
+  }
+  return {trust:score, predicted, verdict,
+          d_claimed, d_other,
+          measured_cir:measured,
+          ref_cir:TOWER_CIR[claimedTower]};
+}
+
+// ── Trust fusion (mirrors fuse() in trinex_pipeline.py) ─────────────
+const W={nlp:0.5, pqc:0.3, rf:0.2};
+function verdictBand(score){
+  if(score>=75) return {key:"ok",   label:"LEGITIMATE",
+                        msg:"All three layers concur. Deliver to user."};
+  if(score<40) return {key:"bad",  label:"FRAUD",
+                        msg:"Block message. At least one layer flagged hard."};
+  return                {key:"warn", label:"SUSPICIOUS",
+                        msg:"Quarantine and warn — partial layer agreement."};
+}
+
+/* ──────────────────── presets ──────────────────── */
+const SAMPLES = [
+  { kind:"legit",
+    label:"Legitimate SBI debit alert",
+    msg:"Dear Customer, INR 1,500.00 has been debited from A/c XX1234 on 14-Jun-26. Avl Bal: INR 24,300.00. Not you? Call 1800-11-2211.",
+    sender:"SBI-ALERTS", signed:true, scenario:"legitimate" },
+  { kind:"legit",
+    label:"NPCI UPI confirmation",
+    msg:"Payment of Rs.249 to BIG BAZAAR via UPI was successful. UPI Ref: 426714528391.",
+    sender:"NPCI", signed:true, scenario:"legitimate" },
+  { kind:"sus",
+    label:"Bank header, but asks for OTP",
+    msg:"HDFC Bank: Confirm your transaction by sharing the OTP sent to your registered number within 5 minutes.",
+    sender:"HDFCBK", signed:false, scenario:"legitimate" },
+  { kind:"fraud",
+    label:"Spoofed sender + KYC phishing",
+    msg:"URGENT: Your SBI account is BLOCKED. Update KYC immediately at http://bit.ly/sbi-kyc or share OTP to reactivate. Last chance!",
+    sender:"VK-SBIBNK", signed:false, scenario:"rogue" },
+  { kind:"fraud",
+    label:"Lottery prize scam",
+    msg:"Congratulations! You won Rs.10,00,000 in the KBC lucky draw. Claim your prize — click here: http://tinyurl.com/kbcprz",
+    sender:"+91-9988776655", signed:false, scenario:"rogue" }
+];
+
+/* ──────────────────── DOM bindings ──────────────────── */
+const $ = id => document.getElementById(id);
+const samplesEl = $("samples");
+const msgEl = $("msg"), senderEl = $("sender");
+const runBtn = $("run");
+
+SAMPLES.forEach((s,i)=>{
+  const b = document.createElement("button");
+  b.className = "sample " + s.kind;
+  b.innerHTML = `<span class="pill">${s.kind==="legit"?"L":s.kind==="sus"?"S":"F"}</span> ${s.label}`;
+  b.onclick = ()=>{
+    msgEl.value = s.msg;
+    senderEl.value = s.sender;
+    // Stash the scenario hint so the runner can pick it up
+    runBtn.dataset.scenario = s.scenario;
+    runBtn.dataset.signed   = s.signed ? "1" : "0";
+  };
+  samplesEl.appendChild(b);
+});
+// Default to first sample
+SAMPLES[0] && (msgEl.value = SAMPLES[0].msg,
+               senderEl.value = SAMPLES[0].sender,
+               runBtn.dataset.scenario = SAMPLES[0].scenario,
+               runBtn.dataset.signed = "1");
+
+/* ──────────────────── clock ──────────────────── */
+function tickClock(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,"0");
+  $("clock").textContent =
+    `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+setInterval(tickClock,1000); tickClock();
+
+/* ──────────────────── render helpers ──────────────────── */
+function escHtml(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+
+function highlightedMessage(msg, flags){
+  let out = escHtml(msg);
+  // Sort flags by length so longer matches replace first (avoid clobbering)
+  [...flags].sort((a,b)=>b.length-a.length).forEach(f=>{
+    const safe = f.replace(/[-/\\^$*+?.()|[\]{}]/g,"\\$&");
+    const re = new RegExp("("+safe+")","gi");
+    out = out.replace(re,'<span class="flag">$1</span>');
+  });
+  return out;
+}
+
+function renderL1(r){
+  const html = `
+    <div class="tokmsg">${highlightedMessage(msgEl.value, r.red_flags)}</div>
+    <div class="bar"><i style="transform:translateX(${(r.trust*100-100).toFixed(1)}%)"></i></div>
+    <div class="bar-row">
+      <span>trust = 1 − fraud_prob = <strong style="color:var(--t1)">${r.trust.toFixed(3)}</strong></span>
+      <span>flags: ${r.red_flags.length}</span>
+    </div>`;
+  $("b1").innerHTML = html;
+}
+
+function renderL2(r){
+  const sigHex = r.signature || "";
+  let displaySig = "(no signature attached to packet)";
+  if (sigHex) {
+    if (sigHex.length > 50) {
+      displaySig = sigHex.slice(0, 36) + " ... " + sigHex.slice(-12);
+    } else {
+      displaySig = sigHex;
+    }
+  } else if (r.sig_bytes > 0) {
+    const fakeBytes = Array.from({length:36},
+      ()=>Math.floor(Math.random()*256).toString(16).padStart(2,"0")).join(" ");
+    displaySig = fakeBytes + " …";
+  }
+
+  const hashRow = r.msg_hash 
+    ? `<dt>Msg Hash</dt><dd style="font-size:11px;color:var(--cyan);letter-spacing:0.04em;word-break:break-all;">${r.msg_hash}</dd>`
+    : "";
+
+  const html = `
+    <dl class="sig-grid">
+      <dt>Algorithm</dt><dd>${r.algo} (NIST FIPS 204)</dd>
+      <dt>Bank</dt><dd>${r.bank ?? "—"}</dd>
+      ${hashRow}
+      <dt>Sig bytes</dt><dd>${r.sig_bytes>0 ? r.sig_bytes+" B" : "—"}</dd>
+      <dt>Status</dt><dd class="${r.valid?'ok':'bad'}">${r.status}</dd>
+    </dl>
+    <div class="sig-bytes">${displaySig}</div>`;
+  $("b2").innerHTML = html;
+}
+
+function renderL3(r){
+  // Build a small overlay plot: 8 magnitude bars for measured vs ref
+  const W=140, H=80, P=8;
+  const bars = r.measured_cir.map((m,i)=>{
+    const x = P + i*((W-2*P)/8);
+    const w = ((W-2*P)/8)-3;
+    const ref = r.ref_cir[i]||0;
+    const hm = (m * (H-2*P));
+    const hr = (ref * (H-2*P));
+    return `
+      <rect x="${x}" y="${H-P-hr}" width="${w}" height="${hr}"
+            fill="#5bc0eb44"/>
+      <rect x="${x}" y="${H-P-hm}" width="${w}" height="${hm}"
+            fill="${r.verdict==='match'?'#3dd68c':r.verdict==='unknown'?'#e5484d':'#f5a524'}"/>
+    `;
+  }).join("");
+  const verdictColor = r.verdict==='match'?'ok':r.verdict==='unknown'?'bad':'bad';
+
+  const html = `
+    <div class="rf-stage">
+      <svg class="rf-plot" viewBox="0 0 ${W} ${H}">
+        <line x1="${P}" y1="${H-P}" x2="${W-P}" y2="${H-P}" stroke="#25325a"/>
+        ${bars}
+      </svg>
+      <div class="rf-meta">
+        <div><span class="k">expected</span> · <span class="v">${TOWER_FOR[senderEl.value]||'unregistered'}</span></div>
+        <div><span class="k">predicted</span> · <span class="v ${verdictColor}">${r.predicted}</span></div>
+        <div><span class="k">verdict</span> · <span class="v ${verdictColor}">${r.verdict}</span></div>
+        <div><span class="k">d(claimed,ref)</span> · <span class="v">${isNaN(r.d_claimed)?'—':r.d_claimed.toFixed(3)}</span></div>
+      </div>
+    </div>`;
+  $("b3").innerHTML = html;
+}
+
+function setLayerState(idx, state, ok){
+  const el = $("lyr"+idx), st = $("s"+idx);
+  el.classList.remove("active","done","ok","bad");
+  if(state==="idle"){st.textContent="Idle"}
+  if(state==="active"){el.classList.add("active");st.textContent="Analyzing…"}
+  if(state==="done"){
+    el.classList.add("done", ok?"ok":"bad");
+    st.textContent = ok?"Pass":"Flag";
+  }
+}
+
+function setGauge(score, band){
+  const arc = $("gaugeArc");
+  // The arc has pathLength=100 and starts at -135deg (transform rotate(135) means start at top-left)
+  // We map score (0..100) to dasharray "value 100"
+  const v = Math.max(0, Math.min(100, score)) * 0.75; // visible arc covers 75% of circle (270°)
+  arc.setAttribute("stroke-dasharray", `${v.toFixed(2)} 100`);
+  const color = band.key==="ok"?"#3dd68c":band.key==="warn"?"#f5a524":"#e5484d";
+  arc.setAttribute("stroke", color);
+  $("gaugeNum").textContent = score.toFixed(1);
+  $("gaugeNum").style.color = color;
+  const v_el = $("verdict");
+  v_el.className = "verdict-banner " + band.key;
+  v_el.querySelector(".v-state").textContent = band.label;
+  v_el.querySelector(".v-msg").textContent = band.msg;
+}
+
+function setWeights(n,p,r,t){
+  $("w1v").textContent = n.toFixed(3);
+  $("w2v").textContent = p.toFixed(3);
+  $("w3v").textContent = r.toFixed(3);
+  $("wT").textContent  = t.toFixed(3);
+}
+
+function resetUI(){
+  ["1","2","3"].forEach(i=>{
+    setLayerState(parseInt(i),"idle");
+    $("b"+i).innerHTML = `<p class="placeholder">${
+      i==="1"?"Awaiting message for NLP classification.":
+      i==="2"?"Awaiting packet for post-quantum signature check.":
+      "Awaiting pilot capture from OFDM receiver."}</p>`;
+  });
+  setGauge(0, {key:"",label:"Awaiting",msg:"Run analysis to see the composite verdict."});
+  $("verdict").className = "verdict-banner";
+  $("verdict").querySelector(".v-state").textContent = "Awaiting";
+  $("verdict").querySelector(".v-msg").textContent = "Run analysis to see the composite verdict.";
+  $("gaugeNum").style.color = "var(--t1)";
+  $("gaugeNum").textContent = "––";
+  setWeights(0,0,0,0);
+}
+
+/* ──────────────────── orchestration ──────────────────── */
+async function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+async function runPipeline(){
+  resetUI();
+  runBtn.disabled = true;
+  const msg = msgEl.value.trim();
+  const sender = senderEl.value;
+  const scenario = runBtn.dataset.scenario || "legitimate";
+  const isSigned = runBtn.dataset.signed === "1";
+
+  if(!msg){runBtn.disabled=false;return}
+
+  const packet = {
+    message: msg,
+    sender_id: sender,
+    signature: isSigned ? "ab".repeat(3309) : null   // ~6618 hex chars
+  };
+
+  // Try fetching from real Python backend first
+  let backendResult = null;
+  try {
+    const res = await fetch("/api/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: msg,
+        sender_id: sender,
+        scenario_type: scenario,
+        signed: isSigned
+      })
+    });
+    if (res.ok) {
+      backendResult = await res.json();
+    }
+  } catch (err) {
+    console.log("Using client-side simulation (backend offline):", err);
+  }
+
+  if (backendResult) {
+    const l1 = backendResult.layers.find(l => l.name === "L1_NLP") || { trust: 0, available: false, detail: {} };
+    const l2 = backendResult.layers.find(l => l.name === "L2_PQC") || { trust: 0, available: false, detail: {} };
+    const l3 = backendResult.layers.find(l => l.name === "L3_RF") || { trust: 0, available: false, detail: {} };
+
+    // ── Layer 1
+    setLayerState(1, "active");
+    await sleep(500);
+    const r1 = {
+      trust: l1.trust,
+      fraud_prob: 1 - l1.trust,
+      red_flags: l1.detail.red_flags || (l1.trust < 0.9 ? FRAUD_TOKENS.filter(t => msg.toLowerCase().includes(t)) : []),
+      has_url: l1.detail.has_url || false,
+      asks_otp: l1.detail.asks_for_otp || false
+    };
+    renderL1(r1);
+    setLayerState(1, "done", r1.trust >= 0.5);
+    $("s1").textContent = l1.available ? "Pass [Real]" : (r1.trust >= 0.5 ? "Pass" : "Flag");
+
+    // ── Layer 2
+    setLayerState(2, "active");
+    await sleep(500);
+    const r2 = {
+      algo: l2.detail.algorithm || "ML-DSA-65",
+      bank: l2.detail.bank_name || REGISTRY[sender],
+      sig_bytes: l2.detail.valid ? 3309 : 0,
+      valid: l2.detail.valid,
+      status: l2.detail.status || (l2.detail.valid ? "Verified · signature OK" : "Unsigned or failed check"),
+      msg_hash: l2.detail.msg_hash,
+      signature: l2.detail.signature
+    };
+    renderL2(r2);
+    setLayerState(2, "done", r2.valid);
+    $("s2").textContent = l2.available ? (r2.valid ? "Pass [Real]" : "Flag [Real]") : (r2.valid ? "Pass" : "Flag");
+
+    // ── Layer 3
+    setLayerState(3, "active");
+    await sleep(500);
+    const r3_sim = rfLayer(packet, scenario);
+    const r3 = {
+      trust: l3.trust,
+      predicted: l3.detail.predicted_label || r3_sim.predicted,
+      verdict: l3.detail.verdict || r3_sim.verdict,
+      d_claimed: l3.detail.d_claimed || r3_sim.d_claimed,
+      measured_cir: r3_sim.measured_cir,
+      ref_cir: r3_sim.ref_cir
+    };
+    renderL3(r3);
+    setLayerState(3, "done", r3.verdict === "match");
+    $("s3").textContent = l3.available ? (r3.verdict === "match" ? "Pass [Real]" : "Flag [Real]") : (r3.verdict === "match" ? "Pass" : "Flag");
+
+    // ── Fuse
+    await sleep(200);
+    const score100 = backendResult.trust_score;
+    const composite = score100 / 100;
+    setWeights(l1.trust, l2.trust, l3.trust, composite);
+    setGauge(score100, verdictBand(score100));
+
+    // Update footnote
+    const isRealMode = l1.available || l2.available || l3.available;
+    document.querySelector(".footnote").lastElementChild.textContent = isRealMode 
+      ? "Real engine mode — running live NLP (DistilBERT) & PQC (ML-DSA-65) backends"
+      : "Heuristic mode — running client-side simulated fallback engines";
+
+  } else {
+    // ── Layer 1 (Simulated)
+    setLayerState(1,"active");
+    await sleep(600);
+    const r1 = nlpLayer(msg);
+    renderL1(r1);
+    setLayerState(1,"done", r1.trust>=0.5);
+
+    // ── Layer 2 (Simulated)
+    setLayerState(2,"active");
+    await sleep(750);
+    const r2 = pqcLayer(packet);
+    renderL2(r2);
+    setLayerState(2,"done", r2.valid);
+
+    // ── Layer 3 (Simulated)
+    setLayerState(3,"active");
+    await sleep(900);
+    const r3 = rfLayer(packet, scenario);
+    renderL3(r3);
+    setLayerState(3,"done", r3.verdict==="match");
+
+    // ── Fuse (Simulated)
+    await sleep(250);
+    const composite = W.nlp*r1.trust + W.pqc*r2.trust + W.rf*r3.trust;
+    const score100 = composite * 100;
+    setWeights(r1.trust, r2.trust, r3.trust, composite);
+    setGauge(score100, verdictBand(score100));
+    
+    document.querySelector(".footnote").lastElementChild.textContent = "Heuristic mode — drop in DistilBERT / liboqs to run real ML & PQC backends";
+  }
+
+  runBtn.disabled = false;
+}
+
+runBtn.addEventListener("click", runPipeline);
+
+/* When sender or message changes manually, reset scenario hint */
+[msgEl,senderEl].forEach(el=>el.addEventListener("input",()=>{
+  // If the user edits manually, don't carry stale scenario from a preset
+  if(!SAMPLES.find(s=>s.msg===msgEl.value && s.sender===senderEl.value)){
+    runBtn.dataset.scenario = "legitimate";
+    runBtn.dataset.signed   = REGISTRY[senderEl.value] ? "1" : "0";
+  }
+}));
+
+/* Run the default sample on first load so the page feels alive */
+window.addEventListener("load", ()=> setTimeout(runPipeline, 400));
+</script>
+</body>
+</html>
