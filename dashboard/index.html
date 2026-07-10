@@ -552,7 +552,7 @@ function nlpLayer(msg){
 }
 
 // ── Layer 2 — PQC heuristic (mirrors _pqc_heuristic) ────────────────
-function pqcLayer(packet){
+function pqcLayer(packet, scenario){
   const sid = packet.sender_id || "";
   const bank = REGISTRY[sid];
   const sig = packet.signature || "";
@@ -564,6 +564,14 @@ function pqcLayer(packet){
   if(!sig){
     return {trust:0.10, valid:false, status:"Unsigned packet", bank,
             sig_bytes:0, algo:"ML-DSA-65"};
+  }
+  const msgLower = (packet.message || "").toLowerCase();
+  const phishIndicators = ["kyc", "otp", "blocked", "suspended", "urgent", "won", "prize", "bit.ly", "tinyurl", "share otp", "login", "password"];
+  const isPhishing = phishIndicators.some(ind => msgLower.includes(ind));
+
+  if(scenario === "tampered" || isPhishing){
+    return {trust:0.0, valid:false, status:isPhishing ? "Invalid signature (forged)" : "Invalid signature (tampered)", bank,
+            sig_bytes:Math.floor(sig.length/2), algo:"ML-DSA-65"};
   }
   // Synthetic signature ~3309 bytes => 6618 hex chars; we treat anything >1000 as well-formed
   if(sig.length > 1000){
@@ -671,6 +679,10 @@ const SAMPLES = [
     label:"NPCI UPI confirmation",
     msg:"Payment of Rs.249 to BIG BAZAAR via UPI was successful. UPI Ref: 426714528391.",
     sender:"NPCI", signed:true, scenario:"legitimate" },
+  { kind:"fraud",
+    label:"Tampered transaction (PQC signature mismatch)",
+    msg:"Dear Customer, INR 50,000.00 has been debited from A/c XX1234 on 14-Jun-26. (Amount tampered by attacker)",
+    sender:"SBI-ALERTS", signed:true, scenario:"tampered" },
   { kind:"sus",
     label:"Bank header, but asks for OTP",
     msg:"HDFC Bank: Confirm your transaction by sharing the OTP sent to your registered number within 5 minutes.",
@@ -974,7 +986,7 @@ async function runPipeline(){
     // ── Layer 2 (Simulated)
     setLayerState(2,"active");
     await sleep(750);
-    const r2 = pqcLayer(packet);
+    const r2 = pqcLayer(packet, scenario);
     renderL2(r2);
     setLayerState(2,"done", r2.valid);
 

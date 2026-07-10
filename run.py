@@ -42,18 +42,18 @@ def cmd_demo():
          "Dear Customer, INR 1,500.00 has been debited from A/c XX1234 on "
          "14-Jun-26. Avl Bal: INR 24,300.00.",
          "SBI-ALERTS", sbi_sig, "sbi_tower_profile", "legitimate"),
-        ("Phishing — spoofed sender",
+        ("Phishing - spoofed sender",
          "URGENT: Your SBI account is BLOCKED. Update KYC at http://bit.ly/sbi-kyc "
          "or share OTP to reactivate.",
          "VK-SBIBNK", None, "sbi_tower_profile", "rogue"),
-        ("Suspicious — bank header, OTP request",
+        ("Suspicious - bank header, OTP request",
          "HDFC Bank: Confirm your transaction by sharing the OTP within 5 minutes.",
          "HDFCBK", None, "hdfc_tower_profile", "legitimate"),
     ]
     for label, msg, sid, sig, tower, scenario in samples:
-        print("\n" + "═" * 72)
+        print("\n" + "=" * 72)
         print(f" {label}")
-        print("─" * 72)
+        print("-" * 72)
         out = analyze(msg, sender_id=sid, signature=sig,
                       claimed_tower=tower, scenario_type=scenario)
         print(f"  Trust Score : {out['trust_score']:.2f}  /  100")
@@ -107,9 +107,22 @@ class TrinexRequestHandler(http.server.SimpleHTTPRequestHandler):
                 # Dynamic signature generation for registered banks if requested
                 if data.get("signed") and not signature:
                     try:
+                        # Simple rule: a bank would never sign phishing or credential harvesting messages.
+                        # If the message contains phishing indicators, sign a modified string to simulate a forged signature.
+                        msg_lower = message.lower()
+                        phish_indicators = ["kyc", "otp", "blocked", "suspended", "urgent", "won", "prize", "bit.ly", "tinyurl", "share otp", "login", "password"]
+                        is_phishing = any(ind in msg_lower for ind in phish_indicators)
+
                         from bank_registry import MultiBankGateway
                         gateway = MultiBankGateway()
-                        signed_pkt = gateway.sign_message(message, sender_id)
+                        if scenario_type == "tampered":
+                            # Sign a modified message to simulate tampering
+                            signed_pkt = gateway.sign_message(message + " TAMPERED", sender_id)
+                        elif is_phishing:
+                            # Sign a modified message to simulate a forged signature
+                            signed_pkt = gateway.sign_message(message + " FORGED", sender_id)
+                        else:
+                            signed_pkt = gateway.sign_message(message, sender_id)
                         signature = signed_pkt['signature']
                     except Exception:
                         signature = "a" * 6618
