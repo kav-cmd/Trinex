@@ -1,4 +1,4 @@
-﻿# TRINEX — Trilayer Trust Fusion Engine
+# TRINEX — Trilayer Trust Fusion Engine
 
 **Fraud Detection in Network Communication Systems**
 Interdisciplinary Project (CS367P) · RV College of Engineering · 2026–27
@@ -10,21 +10,16 @@ communication, plus a visually interactive dashboard for live demos.
 
 ---
 
-
-![TRINEX dashboard showing a LEGITIMATE verdict](docs/images/dashboard_legitimate.png)
-
----
-
 ## What's in the box
 
 ```
 TRINEX_Integrated/
 ├── dashboard/
-│   ├── index.html              ⭐ self-contained interactive frontend
+│   ├── index.html              -> self-contained interactive frontend
 │   └── preview_*.png           rendered screenshots (LEGITIMATE / SUSPICIOUS / FRAUD / mobile)
 │
 ├── fusion_engine/
-│   ├── trinex_pipeline.py      ⭐ unified analyze() — calls all 3 layers
+│   ├── trinex_pipeline.py      -> unified analyze() — calls all 3 layers
 │   ├── trust_fusion.py         original weighted-score formula
 │   ├── fri_metric.py           Fraud Risk Index utility
 │   ├── weight_adapter.py       dynamic-weight stub (future scope)
@@ -176,27 +171,6 @@ and bands.
 
 ---
 
-
----
-
-## Results gallery
-
-### Layer 1 (NLP) - DistilBERT cross-validation
-
-Mean F1 = **0.9656** across 5 folds; only 8 misclassifications out of 1,029 test messages.
-
-![F1 score per fold and averaged confusion matrix](docs/images/nlp_f1_confusion_matrix.png)
-
-### Layer 3 (RF) - OFDM BER vs SNR across transmitter profiles
-
-![BER vs SNR for SBI tower, HDFC tower, and rogue transmitter](docs/images/rf_ber_vs_snr.png)
-
-### Layer 3 (RF) - Rogue detection ROC (AUC = 0.9992)
-
-Threshold of 1.5 achieves **100% rogue detection** at a **2.5% false-flag rate**.
-
-![ROC curve and TPR/FPR vs decision threshold](docs/images/rf_roc_analysis.png)
-
 ## Per-layer accuracy (from each module's own evaluation)
 
 | Layer | Metric                                  | Value |
@@ -246,12 +220,14 @@ Numbers come from `layer1_nlp/notebooks/TRINEX_v2_robust.ipynb`,
 
 | Name             | Roll No.    | Branch                        |
 |:-----------------|:------------|:------------------------------|
-| Aryaki           | 1RV23CS050  | CSE — Layer 1 (NLP)           |
-| Kavya            | 1RV23CY025  | CSE-CY — Layer 2 (PQC)        |
+| Aryaki           | 1RV23CS050  | CSE — Layer 2 (PQC)           |
+| Kavya            | 1RV23CY025  | CSE-CY — Layer 1 (NLP)        |
 | Manaswi          | 1RV23EC075  | ECE — Layer 3 (RF)            |
 | Naman Manoj Jain | 1RV23EC083  | ECE — Trust Fusion + dashboard|
 
 **Guide:** Dr. Padmaja K V, Professor, Dept. of EIE, RVCE.
+
+This copy is maintained by Kavya (Layer 1 — NLP fraud classifier: DistilBERT fine-tuning, dataset merging, and cross-validation evaluation).
 
 ---
 
@@ -260,3 +236,19 @@ Numbers come from `layer1_nlp/notebooks/TRINEX_v2_robust.ipynb`,
 Academic project — all per-layer code retains its original licence
 (level1.zip → MIT, PQC layer → academic use, RF layer → academic use).
 
+
+## Results Gallery
+
+### Live Dashboard — three-layer verdict on a legitimate SBI alert
+![TRINEX dashboard showing a LEGITIMATE verdict](docs/images/dashboard_legitimate.png)
+
+### Layer 1 (NLP) — DistilBERT cross-validation
+Mean F1 = 0.9656 across 5 folds; only 8 misclassifications out of 1,029 test messages.
+![F1 per fold and averaged confusion matrix](docs/images/nlp_f1_confusion_matrix.png)
+
+### Layer 3 (RF) — OFDM BER vs SNR across transmitter profiles
+![BER vs SNR for SBI tower, HDFC tower, and rogue transmitter](docs/images/rf_ber_vs_snr.png)
+
+### Layer 3 (RF) — Rogue detection ROC (AUC = 0.9992)
+Operating threshold of 1.5 gives 100% rogue detection at a 2.5% false-flag rate.
+![ROC curve and TPR/FPR vs decision threshold](docs/images/rf_roc_analysis.png)
