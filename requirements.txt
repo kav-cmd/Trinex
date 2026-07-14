@@ -1,0 +1,16 @@
+# Core (Layer 3 RF + fusion engine run with just these)
+numpy
+scikit-learn
+
+# Data handling & evaluation plots
+pandas
+matplotlib
+seaborn
+
+# Layer 1 — DistilBERT NLP classifier (optional; heuristic fallback without these)
+torch
+transformers
+
+# Layer 2 — ML-DSA-65 signature verification (optional; requires liboqs)
+# pip install liboqs-python
+liboqs-python
