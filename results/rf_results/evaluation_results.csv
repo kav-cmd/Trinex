@@ -1,0 +1,41 @@
+TRINEX RF Fingerprinting — Evaluation Results
+
+Confusion Matrix (counts)
+,Pred SBI,Pred HDFC,Pred Unknown/Rogue
+True SBI,199,0,1
+True HDFC,0,195,5
+True Rogue,0,0,200
+
+Accuracy vs SNR
+SNR (dB),SBI Tower,HDFC Tower,Rogue
+-5,0.0000,0.0000,1.0000
+0,0.0000,0.1000,1.0000
+5,0.4800,0.7600,1.0000
+10,0.9400,0.9600,1.0000
+15,1.0000,1.0000,1.0000
+20,1.0000,1.0000,1.0000
+25,1.0000,1.0000,1.0000
+30,1.0000,1.0000,1.0000
+
+Jamming Attack Results
+Jam (dB),Correct ID,Flagged Unknown,Misclassified
+-10,0.9000,0.0900,0.0100
+-5,0.4400,0.5100,0.0500
+0,0.0200,0.9400,0.0400
+5,0.0000,1.0000,0.0000
+10,0.0000,1.0000,0.0000
+15,0.0000,1.0000,0.0000
+20,0.0000,1.0000,0.0000
+
+Replay Attack Results
+Perturbation,CIR Detection,TS Detection,Both Detection,Total Detection,Acceptance Rate
+0.00,0.0000,0.0000,0.0000,0.0000,1.0000
+0.05,0.0500,0.0800,0.0100,0.1400,0.8600
+0.10,0.2500,0.0900,0.1100,0.4500,0.5500
+0.20,0.3800,0.0900,0.4300,0.9000,0.1000
+0.30,0.2100,0.0600,0.7200,0.9900,0.0100
+0.50,0.0000,0.0200,0.9800,1.0000,0.0000
+
+Rogue Spoofing Results
+Trials,Flagged,Accepted,Detection Rate
+100,100,0,1.0000

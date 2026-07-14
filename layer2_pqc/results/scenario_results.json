@@ -1,17 +1,17 @@
 [
   {
     "Scenario": "Scenario 1: Authentic SBI OTP",
-    "Status": "Invalid signature",
-    "Verdict": "FRAUD",
+    "Status": "Valid signature",
+    "Verdict": "LEGITIMATE",
     "Expected": "LEGITIMATE",
-    "Result": "FAIL"
+    "Result": "PASS"
   },
   {
     "Scenario": "Scenario 2: Authentic HDFC Alert",
-    "Status": "Invalid signature",
-    "Verdict": "FRAUD",
+    "Status": "Valid signature",
+    "Verdict": "LEGITIMATE",
     "Expected": "LEGITIMATE",
-    "Result": "FAIL"
+    "Result": "PASS"
   },
   {
     "Scenario": "Scenario 3: Unsigned SBI Phishing",
