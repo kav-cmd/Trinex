@@ -252,3 +252,11 @@ Mean F1 = 0.9656 across 5 folds; only 8 misclassifications out of 1,029 test mes
 ### Layer 3 (RF) — Rogue detection ROC (AUC = 0.9992)
 Operating threshold of 1.5 gives 100% rogue detection at a 2.5% false-flag rate.
 ![ROC curve and TPR/FPR vs decision threshold](docs/images/rf_roc_analysis.png)
+### Layer 3 (RF) — transmitter fingerprint profiles
+![Constellation-derived fingerprint profiles per transmitter](docs/images/fingerprint_profiles.png)
+
+### Layer 3 (RF) — fingerprint feature separation
+![Feature distributions across legitimate and rogue transmitters](docs/images/fingerprint_features.png)
+
+### Layer 3 (RF) — inter-transmitter distance matrix
+![Pairwise fingerprint distances used for rogue detection](docs/images/fingerprint_distance_matrix.png)

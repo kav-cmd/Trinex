@@ -40,8 +40,8 @@ for col, (tx, label, color) in enumerate(zip(TRANSMITTERS, LABELS, COLORS)):
     axes[1, col].grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig("fingerprint_profiles.png", dpi=150, bbox_inches="tight")
-print("Saved: fingerprint_profiles.png")
+plt.savefig("docs/images/fingerprint_profiles.png", dpi=150, bbox_inches="tight")
+print("Saved: docs/images/fingerprint_profiles.png")
 
 
 # ── Plot 2: Feature vector overlay — the 'fingerprint' view ──
@@ -81,8 +81,8 @@ feat_labels = [f"bin{i}" for i in range(8)] + ["peak", "pwr", "spr", "Nsig"]
 ax.set_xticklabels(feat_labels, rotation=45, fontsize=9)
 
 plt.tight_layout()
-plt.savefig("fingerprint_features.png", dpi=150, bbox_inches="tight")
-print("Saved: fingerprint_features.png")
+plt.savefig("docs/images/fingerprint_features.png", dpi=150, bbox_inches="tight")
+print("Saved: docs/images/fingerprint_features.png")
 
 
 # ── Plot 3: Pairwise distance matrix (heatmap) ──────────────
@@ -116,8 +116,8 @@ ax.set_title("Pairwise Fingerprint Distance Matrix\n(Euclidean distance, SNR=20 
              fontsize=12, fontweight="bold")
 plt.colorbar(im, ax=ax, label="Distance")
 plt.tight_layout()
-plt.savefig("fingerprint_distance_matrix.png", dpi=150, bbox_inches="tight")
-print("Saved: fingerprint_distance_matrix.png")
+plt.savefig("docs/images/fingerprint_distance_matrix.png", dpi=150, bbox_inches="tight")
+print("Saved: docs/images/fingerprint_distance_matrix.png")
 
 print("\nAll three plots generated. Check the layer3_rf folder for PNGs.")
 plt.show()
